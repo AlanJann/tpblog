@@ -1,0 +1,96 @@
+{extend name='public/base' /}
+
+{block name="content"}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="article-title">{$articleInfo.title}</h1>
+      <div class="status">{$articleInfo.click}阅读-{$articleInfo.usermsg}评论-作者：{$articleInfo.auther}
+        {volist name="articleInfo.tags|strToArray" id="vo"}
+        <span class="label label-default">{$vo}</span>
+        {/volist}
+      </div>
+      <div class="article-content">
+        <blockquote>
+          {$articleInfo.desc}
+        </blockquote>
+        {$articleInfo.content|raw}
+      </div>
+      <div class="article-comment">
+        <div class="page-header"><b>相关评论</b></div>
+        <div class="comment-content">
+          <form action="#">
+            <div class="form-group">
+              <textarea class="form-control" id="comment" name="comment" rows="5" cols=""></textarea>
+            </div>
+            <div class="form-group pull-right">
+              <button class="btn btn-primary" id="submit" articleId="{$articleInfo.id}" userId="{:session('user.id')}">评论</button>
+            </div>
+          </form>
+        </div>
+        <div class="clearfix"></div>
+        {volist name="$articleInfo.comments" id="vo"}
+        <div class="comment-list">
+          <div class="comment-list-item">
+            <div class="info">{$vo.user.nickname}<small>{$vo.create_time}</small></div>
+            <div class="content">{$vo.content|raw}</div>
+          </div>
+        </div>
+        {/volist}
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-4">
+      <div class="affix">
+        <div class="page-header h3">推荐文章</div>
+        <div class="topic-list">
+          {volist name="top" id="vo"}
+          <div class="topic-list-item">
+            <a href="#" class="title">{$vo.title}</a>
+          </div>
+          {/volist}
+        </div>
+      </div>
+    </div>
+  </div>
+{/block}
+
+{block name="js" }
+
+<script>
+
+  $(function() {
+    $('#submit').click(function() {
+      var user_id = $(this).attr('userId');
+      var article_id = $(this).attr('articleId');
+      var content = $('#comment').val();
+
+      $.ajax({
+        url: '{:url("api/index/usermsg")}',
+        type: 'post',
+        data: {user_id: user_id,article_id: article_id,content: content},
+        dataType: 'json',
+        success: function (data) {
+          if (data.code == 1) {
+            layer.msg(data.msg, {
+              icon: 6,
+              time: 2000
+            }, function () {
+              location.href = data.url;
+            })
+          } else {
+            layer.open({
+              title: '评论失败',
+              content: data.msg,
+              icon: 5,
+              anim: 6,
+            })
+          }
+        }
+      }) 
+      return false;
+    })
+  })
+
+</script>
+
+{/block}

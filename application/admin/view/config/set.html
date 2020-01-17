@@ -1,0 +1,84 @@
+{include file="public/_head"}
+    <!-- /Navbar -->
+    <!-- Main Container -->
+    <div class="main-container container-fluid">
+        <!-- Page Container -->
+        <div class="page-container">
+
+            <!-- Page Sidebar -->
+            {include file="public/_left"}
+            <!-- /Page Sidebar -->
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Page Breadcrumb -->
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li class="active">
+                            <i class="fa fa-home"></i>&nbsp;系统管理
+                        </li>
+                        <li>系统列表</li>
+                    </ul>
+                </div>
+                <!-- /Page Breadcrumb -->
+                <!-- Page Body -->
+                <div class="page-body">
+                	<!-- <a href="cateadd.html" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;栏目添加</a> -->
+                	<div class="row">
+                		<div class="col-xs-12">
+                			<div class="widget">
+                				<div class="widget-header">
+                					<span class="widget-caption">系统列表</span>
+                					<div class="widget-buttons">
+                						<!-- <ul class="pagination pagination-sm">
+                							<li class="disabled"><a href="#">«</a></li>
+                                            <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                                            <li><a href="#">2</a></li>
+                                            <li><a href="#">3</a></li>
+                                            <li><a href="#">»</a></li>
+                						</ul> -->
+                					</div>
+                				</div>
+                				<div class="widget-body">
+                					<table class="table table-hover table-bordered">
+                						<thead>
+                							<tr>
+                								<th>ID</th>
+                                                <th>网站标题</th>
+                                                <th>版权信息</th>
+                                                <th>更新时间</th>
+                								<th>操作</th>
+                							</tr>
+                						</thead>
+                						<tbody>
+                							<tr>
+                								<td>{$set.id}</td>
+                                                <td>{$set.webname}</td>
+                                                <td>{$set.copyright}</td>
+                                                <td>{$set.update_time}</td>
+                								<td>
+                									<a href="{:url('admin/config/edit')}" class="btn btn-azure btn-xs">编辑</a>
+                								</td>
+                                            </tr>
+                						</tbody>
+                					</table>
+                				</div>
+                			</div>
+                		</div>
+                	</div>
+                </div>
+                <!-- /Page Body -->
+            </div>
+            <!-- /Page Content -->
+
+        </div>
+        <!-- /Page Container -->
+        <!-- Main Container -->
+
+    </div>
+    {include file="public/_js"}
+    <script>
+
+    </script>
+</body>
+<!--  /Body -->
+</html>

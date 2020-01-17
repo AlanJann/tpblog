@@ -1,0 +1,227 @@
+{include file="public/_head"}
+    <!-- /Navbar -->
+    <!-- Main Container -->
+    <div class="main-container container-fluid">
+        <!-- Page Container -->
+        <div class="page-container">
+
+            <!-- Page Sidebar -->
+            {include file="public/_left"}
+            <!-- /Page Sidebar -->
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Page Breadcrumb -->
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="fa fa-home"></i>&nbsp;管理员管理
+                        </li>
+                        <li>管理员列表</li>
+                    </ul>
+                </div>
+                <!-- /Page Breadcrumb -->
+                <!-- Page Body -->
+                <div class="page-body">
+					<a href="{:url('admin/admin/add')}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>&nbsp;管理员添加</a>
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="widget">
+								<div class="widget-header">
+									<span class="widget-caption">管理员列表</span>
+									<div class="widget-buttons">
+										{$admins->render()|raw|replace}
+									</div>
+								</div>
+								<div class="widget-body">
+									<table class="table table-hover table-bordered">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>管理员账号</th>
+                                                <th>管理员昵称</th>
+                                                <th>管理员邮箱</th>
+                                                <th>状态</th>
+                                                <th>管理员类型</th>
+                                                <th>创建时间</th>
+                                                <th>更新时间</th>
+                                                <!-- <th>删除时间</th> -->
+                                                {if session('admin.is_super') == 1} <!-- 超级管理员才可以看到 禁用/设置超级管理员/编辑-->
+                                                <th>操作</th>
+                                                {/if}
+											</tr>
+                                        </thead>
+                                        {volist name="admins" id="vo"}
+										<tr>
+                                            <td>{$vo.id}</td>
+											<td>{$vo.username}</td>
+											<td>{$vo.nickname}</td>
+                                            <td>{$vo.email}</td>
+                                            <td>{if $vo.status == 1}正常 {else /} 禁用 {/if}</td>
+                                            <td>{if $vo.is_super == 1}超级管理员 {else /} 普通管理员 {/if}</td>
+                                            <td>{$vo.create_time}</td>
+                                            <td>{$vo.update_time}</td>
+                                            <!-- <td>{$vo.delete_time}</td> -->
+
+                                            {if session('admin.is_super') == 1} <!-- 超级管理员才可以看到 禁用/设置超级管理员/编辑-->
+											<td>
+                                                {if $vo.status == 0}
+                                                <a href="javascript:;" class="btn btn-sm btn-success admin-status" dataid="{$vo.id}" datastatus="{$vo.status}">启用</a>
+                                                {else /}
+                                                <a href="javascript:;" class="btn btn-sm btn-danger admin-status" dataid="{$vo.id}" datastatus="{$vo.status}">禁用</a>
+                                                {/if}
+
+                                                {if $vo.is_super == 0}
+                                                <a href="javascript:;" class="btn btn-sm btn-azure admin-super" dataid="{$vo.id}" datasuper="{$vo.is_super}">设为超级管理员</a>
+                                                {else /}
+                                                <a href="javascript:;" class="btn btn-sm btn-darkorange admin-super" dataid="{$vo.id}" datasuper="{$vo.is_super}">取消超级管理员</a>
+                                                {/if}
+                                                
+												<a href="{:url('admin/admin/edit',['id'=> $vo.id])}" class="btn btn-sm btn-warning">编辑</a>
+                                                <a href="javascript:;" class="btn btn-sm btn-danger admin-del" dataid="{$vo.id}">删除</a>
+                                            </td>
+                                            {/if}
+                                        </tr>
+                                        {/volist}
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+                <!-- /Page Body -->
+            </div>
+            <!-- /Page Content -->
+
+        </div>
+        <!-- /Page Container -->
+        <!-- Main Container -->
+
+    </div>
+
+    {include file="public/_js"}
+    <script>
+    $(function() {
+        // 设置状态
+        $('.admin-status').click( function () {
+            var id = $(this).attr('dataid');
+            var status = $(this).attr('datastatus');
+            var msg;
+            if (status == 1) {
+                msg = '确认禁用吗？'
+            } else {
+                msg = '确认启用吗？'
+            }
+            layer.confirm(msg, {
+                title: '管理员管理',
+                icon: 3,
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: '{:url("admin/admin/status")}',
+                    type: 'post',
+                    data: {id: id,status: status},
+                    datType: 'json',
+                    success: function (data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000,
+                            },function () {
+                                location.href = data.url;
+                            })
+                        } else {
+                            layer.open({
+                                title: '设置失败',
+                                content: data.msg,
+                                icon: 5,
+                                anim: 6, 
+                            })
+                        }
+                    }
+                })
+            })
+            return false;
+        })
+    
+        // 设置超级管理
+        $('.admin-super').click(function () {
+            var id = $(this).attr('dataid');
+            var is_super = $(this).attr('datasuper');
+            var msg;
+            if (is_super == 1) {
+                msg = '确定取消超级管理员吗？'
+            } else {
+                msg = '确定设为超级管理员吗？'
+            }
+            layer.confirm(msg , {
+                title: '管理员',
+                icon: 3,
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: '{:url("admin/admin/issuper")}',
+                    type: 'post',
+                    data: {id: id, is_super: is_super},
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000,
+                            },function () {
+                                location.href = data.url;
+                            })
+                        } else {
+                            layer.open({
+                                title: '设置失败',
+                                content: data.msg,
+                                icon: 5,
+                                anim: 6, 
+                            })
+                        }
+                    }
+                })
+            })
+            return false;
+        })
+        
+        // 删除管理员
+        $('.admin-del').click( function () {
+            var id = $(this).attr('dataid');
+            layer.confirm('确定删除吗？', {
+                title: '管理员',
+                icon: 3,
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: '{:url("admin/admin/del")}',
+                    type: 'post',
+                    data: {id: id},
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg , {
+                                icon: 6,
+                                time: 2000,
+                            }, function () {
+                                location.href = data.url;
+                            })
+                        } else {
+                            layer.open({
+                                title: '删除失败',
+                                content: data.msg,
+                                icon: 5,
+                                anim: 6,
+                            })
+                        }
+                    }
+                })
+            })
+
+            return false;
+        })
+    })
+    </script>
+</body>
+<!--  /Body -->
+</html>

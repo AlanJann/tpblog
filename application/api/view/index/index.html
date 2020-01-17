@@ -1,0 +1,48 @@
+{extend name="public/base" /}
+{block name="title"}
+{if $catename != null} 
+{$catename} 
+{else /}
+{$webinfo.webname}
+{/if}
+{/block}
+
+{block name="content"}
+<div class="jumbotron">
+  <h1 class="animated fadeInDown">个人博客</h1>
+  <p class="animated shake">个人博客开发使用：thinkphp5.1, layer框架，jqeury。开发完成，完整的后台系统。可发表文字，用户可对文章评论。</p>
+
+</div>
+<div class="row">
+  <div class="col-sm-12 col-md-8">
+    <div class="page-header h3">博文列表</div>
+    <div class="article-list">
+      {volist name="articles" id="vo"}
+      <div class="article-list-item">
+        <a href="{:url('api/article/info',['id'=> $vo.id])}" class="title">{$vo.title}</a>
+        <div class="info">
+          <span class="author">作者：{$vo.auther}</span>-
+          <span class="time">发布时间：{$vo.create_time}</span>-
+          <span class="read">阅读：{$vo.click}</span>-
+          <span class="comment">评论：{$vo.usermsg}</span>
+        </div>
+      </div>
+      {/volist}
+    </div>
+    <nav class="">
+      {$articles->render()|raw|replace}
+    </nav>
+  </div>
+  <div class="col-sm-12 col-md-4">
+    <div class="page-header h3">推荐文章</div>
+
+    {volist name="top" id="vo"}
+    <div class="topic-list">
+      <div class="topic-list-item">
+        <a href="{:url('api/article/info',['id'=> $vo.id])}" class="title">{$vo.title}</a>
+      </div>
+    </div>
+    {/volist}
+  </div>
+</div>
+{/block}
